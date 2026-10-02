@@ -139,13 +139,13 @@
         '<div class="tutor-body">' +
           '<div class="tutor-top">' +
             '<div class="tutor-id"><div class="tutor-name">' + esc(t.name) + '</div>' +
-            '<div class="tutor-meta">' + esc(t.grade) + ' · ' + esc(t.school) + '</div></div>' +
+            '<div class="tutor-meta">' + esc(t.grade) + '<span class="tutor-school"> · ' + esc(t.school) + '</span></div></div>' +
             '<span class="tutor-area">' + esc(t.area) + '</span>' +
           '</div>' +
           '<div class="tag-row">' + t.subjects.map(sj => '<span class="tag">' + esc(sj) + '</span>').join('') + '</div>' +
           '<div class="tutor-foot"><span class="tutor-highlight">' + esc(t.highlight) + '</span>' +
             (SHOW_RATES ? '<span class="tutor-rate">' + esc(t.rate) + '</span>' : '') + '</div>' +
-          '<button type="button" class="tutor-open" data-open="' + i + '">View profile &amp; contact</button>' +
+          '<button type="button" class="tutor-open" data-open="' + i + '">View<span class="tutor-open-long"> profile &amp; contact</span></button>' +
         '</div>' +
       '</div>').join('');
     hydrateSlots(grid);

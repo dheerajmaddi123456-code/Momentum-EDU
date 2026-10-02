@@ -305,9 +305,21 @@ body.modal-open{overflow:hidden}
   .filters{flex-wrap:nowrap;overflow-x:auto;margin:0 -20px;padding:2px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .filters::-webkit-scrollbar{display:none}
   .chip{padding:11px 18px;font-size:15px;flex-shrink:0}
-  .tutor-grid{grid-template-columns:1fr}
-  .tutor-photo{height:200px}
-  .tutor-open{padding:14px 16px;font-size:15px}
+  /* two compact tiles per row; the whole tile opens the profile */
+  .tutor-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .tutor-card{position:relative;padding:8px;gap:10px;border-radius:16px}
+  .tutor-photo{height:auto;aspect-ratio:1;border-radius:10px}
+  .tutor-body{padding:0 4px 4px;gap:10px}
+  .tutor-top{gap:0}
+  .tutor-id{gap:2px;min-width:0}
+  .tutor-name{font-size:16px;line-height:1.2;overflow-wrap:anywhere}
+  .tutor-meta{font-size:12px}
+  .tutor-school,.tutor-area,.tutor-highlight{display:none}
+  .tutor-card .tag-row{gap:4px}
+  .tutor-card .tag{font-size:11px;padding:3px 8px}
+  .tutor-foot{padding-top:0;border-top:0}
+  .tutor-open{padding:11px 6px;font-size:13px;white-space:nowrap}
+  .tutor-open::after{content:'';position:absolute;inset:0;border-radius:16px}
   .no-tutors{padding:28px 20px}
 
   /* forms */
