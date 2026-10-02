@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Momentum Education | Peer tutoring across the GTA</title>
+<meta name="description" content="Low-cost peer tutoring connecting high school tutors with elementary students across the GTA. Families pay tutors directly, and tutors keep 100% of what they earn.">
+<link rel="icon" href="assets/logo-dark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+
+<!-- HERO -->
+<header id="top" class="hero">
+  <div class="hero-bg">
+    <div class="slot" data-slot="m-hero-bg" data-caption="Hero photo — tutor and young student working together"></div>
+  </div>
+  <div class="hero-shade"></div>
+
+  <nav class="nav">
+    <a href="#top" class="nav-logo" aria-label="Momentum Education home"><img src="assets/logo-light.png" alt="Momentum Education"></a>
+    <div class="nav-links">
+      <a href="#mission" class="nav-link">Mission</a>
+      <a href="#tutors" class="nav-link">Tutors</a>
+      <a href="#forms" class="nav-link">Parents</a>
+      <a href="#blog" class="nav-link">Blog</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+      <a data-form="tutor" target="_blank" rel="noopener" class="nav-cta nav-cta-outline">Become a tutor</a>
+      <a href="#tutors" class="nav-cta nav-cta-solid">Find a tutor</a>
+    </div>
+  </nav>
+
+  <div class="hero-body">
+    <div class="hero-main">
+      <div class="hero-eyebrow"><span class="sand">✦</span>Peer tutoring across the GTA</div>
+      <h1 class="hero-title">High school tutors helping elementary students grow</h1>
+      <div class="hero-actions">
+        <a href="#tutors" class="btn-sand">Browse tutor profiles</a>
+        <a href="#mission" class="hero-scroll" aria-label="Scroll to mission">↓</a>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="hero-star">✦</div>
+      <div class="hero-rule"></div>
+      <p class="hero-note">Low-cost, high-quality tutoring. Families pay tutors directly, and tutors keep 100% of what they earn.</p>
+      <a href="#tutors" class="hero-card">
+        <div class="hero-card-img"><div class="slot" data-slot="m-hero-card" data-caption="Group photo of tutors"></div></div>
+        <div class="hero-card-row"><span>Meet our tutors</span><span>↗</span></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-wordmark">Momentum</div>
+</header>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stat stat-lead"><span class="stat-lead-text">How we're different</span><span class="stat-glyphs">/ — × +</span></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">of lesson fees go to the tutor</div></div>
+  <div class="stat"><div class="stat-num">$0</div><div class="stat-label">platform or sign-up fees</div></div>
+  <div class="stat"><div class="stat-num">Gr. 1–8</div><div class="stat-label">elementary students</div></div>
+  <div class="stat"><div class="stat-num">GTA</div><div class="stat-label">tutors across the region</div></div>
+</section>
+
+<!-- MISSION -->
+<section id="mission" class="mission">
+  <div class="eyebrow eyebrow-gap"><span class="taupe">✦</span>Our mission</div>
+  <h2 class="mission-title">Low-cost tutoring from high-quality educators, so every family can <span class="mission-pill">✦</span> afford support and every community gains from it</h2>
+  <p class="mission-text">Momentum Education connects high school tutors with elementary students across the GTA. Tutors are independent partners who use our platform to reach families. We don't take a cut.</p>
+  <div role="tablist" class="steps" id="steps"></div>
+  <div class="step-detail">
+    <div class="step-title" id="step-title"></div>
+    <p class="step-text" id="step-text"></p>
+  </div>
+</section>
+
+<!-- PARTNER MODEL CAROUSEL -->
+<section class="band">
+  <div class="wrap carousel">
+    <div class="carousel-card">
+      <div class="progress"><div class="progress-bar" id="slide-progress"></div></div>
+      <div class="carousel-copy">
+        <div class="eyebrow"><span class="taupe">✦</span> <span id="slide-eyebrow"></span></div>
+        <h3 class="carousel-title" id="slide-title"></h3>
+        <div class="carousel-counter" id="slide-counter"></div>
+        <p class="carousel-text" id="slide-text"></p>
+      </div>
+      <div class="carousel-controls">
+        <button type="button" class="round-btn" id="slide-prev" aria-label="Previous">←</button>
+        <a href="#tutors" class="pill-dark">Find a tutor<span class="pill-dot">→</span></a>
+        <button type="button" class="round-btn" id="slide-next" aria-label="Next">→</button>
+      </div>
+    </div>
+    <div class="carousel-stage">
+      <div id="slide-layers"></div>
+      <div class="carousel-float">
+        <div class="float-icon" id="slide-icon"></div>
+        <div class="float-title" id="slide-card-title"></div>
+        <div class="float-text" id="slide-card-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TUTORS -->
+<section id="tutors" class="section">
+  <div class="wrap tutors">
+    <div class="section-head">
+      <div class="section-intro">
+        <div class="eyebrow"><span class="taupe">✦</span> Our tutors</div>
+        <h2 class="section-title">Meet our tutor partners</h2>
+        <p class="section-text">Open a profile to see grades, experience and contact details. Reach out to the tutor directly to arrange lessons.</p>
+      </div>
+      <label class="area-label">Area
+        <select id="area" class="area-select"></select>
+      </label>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="tutor-grid" id="tutor-grid"></div>
+    <div class="no-tutors" id="no-tutors" hidden>No tutors match those filters yet. Try another area or subject.</div>
+  </div>
+</section>
+
+<!-- FORMS -->
+<section id="forms" class="band band-tall">
+  <div class="wrap forms">
+    <div class="form-card form-card-dark">
+      <div class="eyebrow"><span class="sand">✦</span> For parents</div>
+      <h3 class="form-title">Questions or concerns about a tutor?</h3>
+      <p class="form-text">Use our parent form for general questions, feedback or complaints. We read every submission and follow up by email.</p>
+      <a data-form="parent" target="_blank" rel="noopener" class="pill-cta pill-cta-sand">Open parent form<span class="pill-cta-dot">↗</span></a>
+    </div>
+    <div id="apply" class="form-card form-card-light">
+      <div class="eyebrow"><span class="taupe">✦</span> For high school students</div>
+      <h3 class="form-title">Become a tutor partner</h3>
+      <div class="form-list">
+        <div><span class="taupe">✦</span>Keep 100% of what you earn</div>
+        <div><span class="taupe">✦</span>Set your own rate, subjects and schedule</div>
+        <div><span class="taupe">✦</span>Get a public profile families across the GTA can find</div>
+      </div>
+      <a data-form="tutor" target="_blank" rel="noopener" class="pill-cta pill-cta-dark">Apply to tutor<span class="pill-cta-dot">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog" class="section">
+  <div class="wrap blog">
+    <div class="section-head">
+      <div class="section-intro section-intro-free">
+        <div class="eyebrow"><span class="taupe">✦</span> Blog</div>
+        <h2 class="section-title">Latest from Momentum</h2>
+      </div>
+      <a href="#blog" class="outline-link">All posts →</a>
+    </div>
+    <div class="post-grid" id="post-grid"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="band band-tall">
+  <div class="faq">
+    <div class="faq-head">
+      <div class="eyebrow"><span class="taupe">✦</span> FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq-list" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="assets/logo-dark.png" alt="Momentum Education">
+        <p>Low-cost peer tutoring connecting high school tutors with elementary students across the GTA.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col"><span class="footer-col-title">Explore</span><a href="#mission">Mission</a><a href="#tutors">Tutors</a><a href="#blog">Blog</a><a href="#faq">FAQ</a></div>
+        <div class="footer-col"><span class="footer-col-title">Forms</span><a data-form="parent" target="_blank" rel="noopener">Parent questions &amp; concerns ↗</a><a data-form="tutor" target="_blank" rel="noopener">Tutor application ↗</a></div>
+        <div class="footer-col"><span class="footer-col-title">Contact</span><a href="mailto:hello@momentumeducation.ca">hello@momentumeducation.ca</a><span class="footer-muted">Greater Toronto Area</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Momentum Education. Tutors are independent partners, not employees.</span>
+      <span class="footer-glyphs">/ — × +</span>
+    </div>
+  </div>
+</footer>
+
+<!-- TUTOR PROFILE MODAL -->
+<div id="modal-root"></div>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
