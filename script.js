@@ -3,6 +3,9 @@
   const PARENT_FORM_URL = 'https://forms.gle/your-parent-form';
   const TUTOR_FORM_URL = 'https://forms.gle/your-tutor-application';
   const SHOW_RATES = true;
+  // Blog is switched off until there are real posts. Set to true to bring back the
+  // section and its nav/footer links; the posts themselves live in POSTS below.
+  const SHOW_BLOG = false;
   // Photos: drop a file named after the slot id (e.g. m-hero-bg.jpg) into this folder.
   const IMAGE_DIR = 'assets/images/';
   const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'webp'];
@@ -213,7 +216,8 @@
       '</div>';
     hydrateSlots(root);
   }
-  function closeTutor() { state.active = -1; renderModal(); }
+  function openTutor(i) { state.active = i; document.body.classList.add('modal-open'); renderModal(); }
+  function closeTutor() { state.active = -1; document.body.classList.remove('modal-open'); renderModal(); }
 
   // ------------------------------------------------------------------- init
   document.querySelectorAll('[data-form]').forEach(a => {
@@ -228,7 +232,10 @@
   renderSlide();
   renderFilters();
   renderTutors();
-  renderPosts();
+  if (SHOW_BLOG) {
+    document.querySelectorAll('[data-blog]').forEach(el => { el.hidden = false; });
+    renderPosts();
+  }
   renderFaqs();
   hydrateSlots(document);
 
@@ -248,10 +255,17 @@
   $('area').addEventListener('change', e => { state.area = e.target.value; renderTutors(); });
   $('tutor-grid').addEventListener('click', e => {
     const b = e.target.closest('[data-open]');
-    if (!b) return;
-    state.active = Number(b.dataset.open);
-    renderModal();
+    if (b) openTutor(Number(b.dataset.open));
   });
+  // Mobile menu
+  const navToggle = $('nav-toggle'), navLinks = $('nav-links');
+  const setMenu = open => {
+    navLinks.classList.toggle('is-open', open);
+    navToggle.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', open);
+  };
+  navToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('is-open')));
+  navLinks.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
   $('faq-list').addEventListener('click', e => {
     const b = e.target.closest('[data-faq]');
     if (!b) return;
@@ -263,5 +277,9 @@
     // Only the backdrop itself and the × button close; clicks inside the dialog don't.
     if (e.target.hasAttribute('data-close')) closeTutor();
   });
-  window.addEventListener('keydown', e => { if (e.key === 'Escape' && state.active >= 0) closeTutor(); });
+  window.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (state.active >= 0) closeTutor();
+    setMenu(false);
+  });
 })();

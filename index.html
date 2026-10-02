@@ -23,11 +23,12 @@
 
   <nav class="nav">
     <a href="#top" class="nav-logo" aria-label="Momentum Education home"><img src="assets/logo-light.png" alt="Momentum Education"></a>
-    <div class="nav-links">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="nav-links">
       <a href="#mission" class="nav-link">Mission</a>
       <a href="#tutors" class="nav-link">Tutors</a>
       <a href="#forms" class="nav-link">Parents</a>
-      <a href="#blog" class="nav-link">Blog</a>
+      <a href="#blog" class="nav-link" data-blog hidden>Blog</a>
       <a href="#faq" class="nav-link">FAQ</a>
       <a data-form="tutor" target="_blank" rel="noopener" class="nav-cta nav-cta-outline">Become a tutor</a>
       <a href="#tutors" class="nav-cta nav-cta-solid">Find a tutor</a>
@@ -147,8 +148,8 @@
   </div>
 </section>
 
-<!-- BLOG -->
-<section id="blog" class="section">
+<!-- BLOG (hidden until SHOW_BLOG is turned on in script.js) -->
+<section id="blog" class="section" data-blog hidden>
   <div class="wrap blog">
     <div class="section-head">
       <div class="section-intro section-intro-free">
@@ -181,7 +182,7 @@
         <p>Low-cost peer tutoring connecting high school tutors with elementary students across the GTA.</p>
       </div>
       <div class="footer-cols">
-        <div class="footer-col"><span class="footer-col-title">Explore</span><a href="#mission">Mission</a><a href="#tutors">Tutors</a><a href="#blog">Blog</a><a href="#faq">FAQ</a></div>
+        <div class="footer-col"><span class="footer-col-title">Explore</span><a href="#mission">Mission</a><a href="#tutors">Tutors</a><a href="#blog" data-blog hidden>Blog</a><a href="#faq">FAQ</a></div>
         <div class="footer-col"><span class="footer-col-title">Forms</span><a data-form="parent" target="_blank" rel="noopener">Parent questions &amp; concerns ↗</a><a data-form="tutor" target="_blank" rel="noopener">Tutor application ↗</a></div>
         <div class="footer-col"><span class="footer-col-title">Contact</span><a href="mailto:hello@momentumeducation.ca">hello@momentumeducation.ca</a><span class="footer-muted">Greater Toronto Area</span></div>
       </div>
