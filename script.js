@@ -13,14 +13,14 @@
   // ------------------------------------------------------------------- data
   const STEPS = [
     { name: 'Browse', glyph: '/', title: 'Browse tutor profiles', text: 'Filter by subject and area, then read each tutor’s grades, achievements and experience.' },
-    { name: 'Connect', glyph: '—', title: 'Contact the tutor directly', text: 'Use the contact details on their profile to agree on a schedule, location and rate that suits your family.' },
+    { name: 'Connect', glyph: '—', title: 'Contact the tutor directly', text: 'Use the contact details on their profile to agree on a schedule, location and rate that suits your needs.' },
     { name: 'Learn', glyph: '×', title: 'Pay your tutor directly', text: 'Lessons are paid straight to the tutor. Momentum Education takes no fees, so tutors keep 100%.' },
-    { name: 'Give back', glyph: '+', title: 'Stronger communities', text: 'Younger students get affordable support, and high school students earn, teach and give back to their neighbourhoods.' }
+    { name: 'Give back', glyph: '+', title: 'Stronger communities', text: 'Younger students get affordable support, and high school students earn, teach and give back to their communities.' }
   ];
   const SLIDES = [
-    { eyebrow: 'Partners, not employees', title: 'A platform built for tutors', text: 'Tutors are independent partners. They set their own rates, subjects and hours, and use Momentum to reach families.', icon: '✦', cardTitle: 'Tutor-first', cardText: 'No commission, no platform fee. Every dollar a family pays goes to the tutor.', img: 'm-slide-1', placeholder: 'Tutor working one-on-one with a student' },
-    { eyebrow: 'Low cost', title: 'Quality tutoring families can afford', text: 'Peer tutors offer lower rates than private tutoring companies, without cutting corners on quality.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Elementary student doing homework' },
-    { eyebrow: 'Community', title: 'Giving back across the GTA', text: 'From Mississauga to Scarborough, local high school students support younger students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Tutors at a community event' }
+    { eyebrow: 'Partners, not employees', title: 'A platform built for tutors', text: 'Tutors are independent partners. They set their own rates, subjects and hours, and use Momentum to reach students.', icon: '✦', cardTitle: 'Tutor-first', cardText: 'No commission, no platform fee. Every dollar paid pays goes to the tutor.', img: 'm-slide-1', placeholder: 'Tutor working one-on-one with a student' },
+    { eyebrow: 'Low cost', title: 'Quality tutoring - Affordable price', text: 'Peer tutors offer lower rates than private tutoring companies, without cutting corners on quality.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Elementary student doing homework' },
+    { eyebrow: 'Community', title: 'Giving back', text: 'From across the GTA, we enable local high schoolers support younger students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Tutors at a community event' }
   ];
   const TUTORS = [
     { name: 'Aisha Rahman', grade: 'Grade 12', school: 'Markville S.S.', area: 'Markham', subjects: ['Math', 'Science'], highlight: '97% average', rate: '$20/hr', email: 'aisha.r@example.com', phone: '(416) 555-0141', bio: 'I love helping younger students feel confident with math. I explain things step by step and use lots of practice problems.', achievements: ['97% average, Grade 11', 'Waterloo Math Contest, Certificate of Distinction', 'Ontario Scholar'], experience: ['2 years tutoring Grades 3–6 math', 'Peer tutor, school homework club'] },
@@ -37,7 +37,7 @@
   ];
   const FAQS = [
     { q: 'How does payment work?', a: 'You pay your tutor directly, by e-transfer or another method you agree on together. Momentum Education takes no commission, so tutors keep 100%.' },
-    { q: 'How much does tutoring cost?', a: 'Each tutor sets their own hourly rate, shown on their profile. Our goal is to keep tutoring affordable for every family.' },
+    { q: 'How much does tutoring cost?', a: 'Each tutor sets their own hourly rate, shown on their profile or negotiable in your personal disscussions. Our goal is to keep tutoring affordable and flexible for all.' },
     { q: 'Who are the tutors?', a: 'High school students across the GTA who apply through our tutor form. Each profile lists their grades, achievements, experience and subjects.' },
     { q: 'Are tutors employed by Momentum Education?', a: 'No. Tutors are independent partners who use our platform to connect with families. Schedules, rates and lesson plans are arranged between you and the tutor.' },
     { q: 'How do I raise a question or concern about a tutor?', a: 'Use the parent form in the Parents section. We review every submission and follow up by email.' },
