@@ -1,0 +1,9 @@
+# This repo is public and published with GitHub Pages, so anything committed here is public.
+# Tutor data and headshots live in a private Google Sheet / Google Drive and reach the
+# site through the Apps Script web app (see TUTORS_API_URL in script.js). Keep them out of git.
+assets/images/tutors/
+tutors/
+data/
+*.csv
+*.xlsx
+*.tsv

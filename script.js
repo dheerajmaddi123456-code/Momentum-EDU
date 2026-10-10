@@ -3,6 +3,13 @@
   const PARENT_FORM_URL = 'https://forms.gle/your-parent-form';
   const TUTOR_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfw5Php-losWtqLC_fmR1BOwmB4OpnT49wVe3IHJNu9rDokxQ/viewform?usp=header';
   const SHOW_RATES = true;
+  // Accepted tutors: Apps Script web app that returns only public profile fields as JSON.
+  // The sheet itself stays private.
+  const TUTORS_API_URL = 'https://script.google.com/macros/s/AKfycbzPToTRb0tH4xMSU4uj48BFIPGq1uEI79fWZ-JVFko-8jMOLLUVlqKqFTRbJOqGT6-E/exec';
+  // Last good response, kept in the visitor's browser so repeat visits show tutors instantly.
+  const TUTORS_CACHE_KEY = 'momentum-tutors-v1';
+  // Shown in place of a headshot when a tutor didn't upload one (or it can't be loaded).
+  const TUTOR_FALLBACK_IMG = 'assets/logo-dark.png';
   // Blog is switched off until there are real posts. Set to true to bring back the
   // section and its nav/footer links; the posts themselves live in POSTS below.
   const SHOW_BLOG = false;
@@ -22,14 +29,9 @@
     { eyebrow: 'Quality', title: 'Quality tutoring from peers', text: 'High school tutors bring strong grades and recent classroom experience to every lesson.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Student doing homework' },
     { eyebrow: 'Community', title: 'Giving back', text: 'From across the GTA, we enable local high schoolers in supporting students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Tutors at a community event' }
   ];
-  const TUTORS = [
-    { name: 'Aisha Rahman', grade: 'Grade 12', school: 'Markville S.S.', area: 'Markham', subjects: ['Math', 'Science'], highlight: '97% average', rate: '$20/hr', email: 'aisha.r@example.com', phone: '(416) 555-0141', bio: 'I love helping students feel confident with math, from times tables to high school functions. I explain things step by step and use lots of practice problems.', achievements: ['97% average, Grade 11', 'Waterloo Math Contest, Certificate of Distinction', 'Ontario Scholar'], experience: ['2 years tutoring Grades 3–11 math', 'Peer tutor, school homework club'] },
-    { name: 'Daniel Okafor', grade: 'Grade 11', school: 'Turner Fenton S.S.', area: 'Brampton', subjects: ['English', 'Reading & Writing'], highlight: '94% in English', rate: '$18/hr', email: 'daniel.o@example.com', phone: '(905) 555-0172', bio: 'Reading opened a lot of doors for me. I help students build reading habits and write with structure, from book reports to high school essays.', achievements: ['94% in Grade 10 English', 'School writing contest winner, 2025'], experience: ['Library reading buddy volunteer', '1 year tutoring Grades 2–10'] },
-    { name: 'Mei Lin Chen', grade: 'Grade 12', school: 'Richmond Hill H.S.', area: 'Richmond Hill', subjects: ['Math', 'French'], highlight: '96% average', rate: '$22/hr', email: 'meilin.c@example.com', phone: '(905) 555-0193', bio: 'Bilingual in English and French. I make French practice fun with games and conversation.', achievements: ['96% average', 'DELF B2 certificate', 'Honour roll, 3 years'], experience: ['French immersion camp counsellor', '2 years tutoring math and French'] },
-    { name: 'Lucas Ferreira', grade: 'Grade 11', school: 'Port Credit S.S.', area: 'Mississauga', subjects: ['Science', 'Coding'], highlight: '95% in Science', rate: '$18/hr', email: 'lucas.f@example.com', phone: '(905) 555-0114', bio: 'I teach science through simple experiments and introduce coding with Scratch and Python.', achievements: ['95% in Grade 10 Science', 'Regional science fair, silver'], experience: ['Robotics club mentor', 'Coding workshop assistant'] },
-    { name: 'Priya Sharma', grade: 'Grade 12', school: 'Agincourt C.I.', area: 'Scarborough', subjects: ['Math', 'English'], highlight: '98% average', rate: '$20/hr', email: 'priya.s@example.com', phone: '(416) 555-0128', bio: 'Patient and organized. I work with students on homework, EQAO and exam prep, and study skills.', achievements: ['98% average', 'Principal’s list', 'DECA provincial finalist'], experience: ['3 years tutoring Grades 1–12', 'Summer reading program leader'] },
-    { name: 'Jordan Mitchell', grade: 'Grade 11', school: 'Vaughan S.S.', area: 'Vaughan', subjects: ['Reading & Writing', 'French'], highlight: '93% average', rate: '$17/hr', email: 'jordan.m@example.com', phone: '(905) 555-0156', bio: 'I help early readers with phonics and comprehension, and support French immersion homework.', achievements: ['93% average', 'Student council representative'], experience: ['After-school program volunteer', '1 year tutoring Grades 1–4'] }
-  ].map((t, i) => ({ ...t, img: 'm-tutor-' + (i + 1) }));
+  // Filled from TUTORS_API_URL at startup; see loadTutors().
+  let TUTORS = [];
+  let SUBJECTS = ['All'];
   const POSTS = [
     { cat: 'Parents', date: 'Sep 18, 2026', title: 'What to look for in a tutor profile', excerpt: 'Grades, experience and subject fit: how to choose the right tutor for your child.', img: 'm-blog-1' },
     { cat: 'Tutors', date: 'Sep 4, 2026', title: 'Setting your rate as a high school tutor', excerpt: 'A simple guide to pricing your lessons fairly while keeping tutoring affordable.', img: 'm-blog-2' },
@@ -43,10 +45,9 @@
     { q: 'How do I raise a question or concern about a tutor?', a: 'Use the parent form in the Parents section. We review every submission and follow up by email.' },
     { q: 'How can I become a tutor?', a: 'If you’re a high school student in the GTA, fill out the tutor application form. We’ll review it and assist you in setting up your profile.' }
   ];
-  const SUBJECTS = ['All', 'Math', 'Science', 'English', 'Reading & Writing', 'French', 'Coding'];
   const ALL_AREA = 'All of the GTA';
 
-  const state = { step: 0, slide: 0, filter: 'All', area: ALL_AREA, faq: 0, active: -1 };
+  const state = { step: 0, slide: 0, filter: 'All', area: ALL_AREA, faq: 0, active: -1, tutors: 'loading' };
 
   // ---------------------------------------------------------------- helpers
   const $ = id => document.getElementById(id);
@@ -124,8 +125,97 @@
     $('slide-layers').querySelectorAll('.slide-layer').forEach((l, i) => l.classList.toggle('is-active', i === state.slide));
   }
 
+  // ------------------------------------------------------------ tutor data
+  // Form answers: split a comma list (ignoring commas inside brackets), or split a
+  // multi-line answer and drop "1." / "-" numbering people type in.
+  const splitList = s => s.split(/,(?![^(]*\))/).map(x => x.trim()).filter(Boolean);
+  const splitLines = s => s.split(/\r?\n/).map(x => x.replace(/^\s*(\d+[.)]|[-•*])\s*/, '').trim()).filter(Boolean);
+  const titleCase = s => s.toLowerCase().replace(/(^|[\s\-/])(\p{L})/gu, (m, p, c) => p + c.toUpperCase());
+  function formatAverage(s) {
+    if (!/^\d*\.?\d+%?$/.test(s)) return s;
+    let n = parseFloat(s);
+    if (!s.endsWith('%') && n <= 1) n *= 100; // percent-formatted cells export as 0.9
+    return Math.round(n * 10) / 10 + '% average';
+  }
+  function photoURL(s) {
+    const first = splitList(s)[0] || '';
+    const drive = first.match(/[?&]id=([\w-]+)/) || first.match(/\/d\/([\w-]+)/);
+    if (drive) return 'https://drive.google.com/thumbnail?id=' + drive[1] + '&sz=w800';
+    return /^https?:\/\//.test(first) ? first : '';
+  }
+  // The web app may send a field as text or as a list; accept either, and clean each
+  // item the same way (so "1. Honour roll" inside a list loses its numbering too).
+  const text = v => (v == null ? '' : String(v)).trim();
+  const list = (v, split) => (Array.isArray(v) ? v : [v]).flatMap(x => split(text(x)));
+  // Bare answers to yes/no questions aren't experience entries.
+  const notYesNo = s => !/^(yes|no|n\/?a|none)\.?$/i.test(s);
+  // Turn one record from the web app into the shape the cards and profile use.
+  // Only name is required; any field the web app doesn't send is simply left out.
+  // The "what makes you a good tutor" answer is deliberately never read or shown.
+  function toTutor(r) {
+    if (!r || typeof r !== 'object' || !text(r.name)) return null;
+    return {
+      name: text(r.name),
+      email: text(r.email),
+      area: titleCase(text(r.area || r.city)) || 'GTA',
+      grade: text(r.grade),
+      school: text(r.school),
+      subjects: list(r.subjects, splitList),
+      levels: list(r.levels, splitList),
+      highlight: formatAverage(text(r.average || r.highlight)),
+      achievements: list(r.achievements, splitLines),
+      experience: list(r.experience, splitLines).filter(notYesNo),
+      photo: photoURL(text(r.photo)),
+      rate: text(r.rate)
+    };
+  }
+  function applyTutors(records, status) {
+    const openKey = state.active >= 0 ? TUTORS[state.active].name + '|' + TUTORS[state.active].email : '';
+    TUTORS = records.map(toTutor).filter(Boolean);
+    state.tutors = status;
+    SUBJECTS = ['All', ...Array.from(new Set(TUTORS.flatMap(t => t.subjects))).sort()];
+    if (!SUBJECTS.includes(state.filter)) state.filter = 'All';
+    if (!TUTORS.some(t => t.area === state.area)) state.area = ALL_AREA;
+    // Keep an open profile pointing at the same tutor after a refresh.
+    if (openKey) {
+      const i = TUTORS.findIndex(t => t.name + '|' + t.email === openKey);
+      if (i < 0) closeTutor(); else state.active = i;
+    }
+    renderAreas();
+    renderFilters();
+    renderTutors();
+  }
+  async function loadTutors() {
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(TUTORS_CACHE_KEY)); } catch (e) { /* storage blocked */ }
+    if (Array.isArray(cached)) applyTutors(cached, 'ready');
+    try {
+      const res = await fetch(TUTORS_API_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      const records = Array.isArray(data) ? data : data && data.tutors;
+      if (!Array.isArray(records)) throw new Error((data && data.error) || 'Unexpected response');
+      try { localStorage.setItem(TUTORS_CACHE_KEY, JSON.stringify(records)); } catch (e) { /* storage blocked */ }
+      applyTutors(records, 'ready');
+    } catch (err) {
+      console.error('Could not load tutors', err);
+      if (!Array.isArray(cached)) applyTutors([], 'error');
+    }
+  }
+  // Headshot, or the Momentum logo when there isn't one / it fails to load.
+  const LOGO_PHOTO = '<div class="tutor-logo"><img src="' + esc(TUTOR_FALLBACK_IMG) + '" alt="Momentum Education"></div>';
+  const photoHTML = t => t.photo
+    ? '<img class="tutor-img" src="' + esc(t.photo) + '" alt="' + esc(t.name) + '" referrerpolicy="no-referrer" loading="lazy">'
+    : LOGO_PHOTO;
+  const onPhotoError = e => { if (e.target.matches && e.target.matches('.tutor-img')) e.target.outerHTML = LOGO_PHOTO; };
+
   // ----------------------------------------------------------------- tutors
+  function renderAreas() {
+    $('area').innerHTML = [ALL_AREA, ...Array.from(new Set(TUTORS.map(t => t.area))).sort()]
+      .map(ar => '<option value="' + esc(ar) + '"' + (ar === state.area ? ' selected' : '') + '>' + esc(ar) + '</option>').join('');
+  }
   function renderFilters() {
+    $('filters').hidden = SUBJECTS.length < 2; // only "All" means there's nothing to filter by
     $('filters').innerHTML = SUBJECTS.map(c =>
       '<button type="button" class="chip' + (c === state.filter ? ' is-active' : '') + '" data-filter="' + esc(c) + '">' + esc(c) + '</button>').join('');
   }
@@ -135,21 +225,26 @@
     const grid = $('tutor-grid');
     grid.innerHTML = visible.map(({ t, i }) =>
       '<div class="tutor-card">' +
-        '<div class="tutor-photo">' + slotHTML(t.img, 'Tutor headshot') + '</div>' +
+        '<div class="tutor-photo">' + photoHTML(t) + '</div>' +
         '<div class="tutor-body">' +
           '<div class="tutor-top">' +
             '<div class="tutor-id"><div class="tutor-name">' + esc(t.name) + '</div>' +
-            '<div class="tutor-meta">' + esc(t.grade) + '<span class="tutor-school"> · ' + esc(t.school) + '</span></div></div>' +
+            '<div class="tutor-meta">' + esc(t.grade) + (t.school ? '<span class="tutor-school"> · ' + esc(t.school) + '</span>' : '') + '</div></div>' +
             '<span class="tutor-area">' + esc(t.area) + '</span>' +
           '</div>' +
           '<div class="tag-row">' + t.subjects.map(sj => '<span class="tag">' + esc(sj) + '</span>').join('') + '</div>' +
           '<div class="tutor-foot"><span class="tutor-highlight">' + esc(t.highlight) + '</span>' +
-            (SHOW_RATES ? '<span class="tutor-rate">' + esc(t.rate) + '</span>' : '') + '</div>' +
+            (SHOW_RATES && t.rate ? '<span class="tutor-rate">' + esc(t.rate) + '</span>' : '') + '</div>' +
           '<button type="button" class="tutor-open" data-open="' + i + '">View<span class="tutor-open-long"> profile &amp; contact</span></button>' +
         '</div>' +
       '</div>').join('');
-    hydrateSlots(grid);
-    $('no-tutors').hidden = visible.length !== 0;
+    const note = $('no-tutors');
+    note.textContent =
+      state.tutors === 'loading' ? 'Loading tutor profiles…' :
+      state.tutors === 'error' ? 'We couldn’t load tutor profiles right now. Please refresh the page or try again later.' :
+      !TUTORS.length ? 'New tutor profiles are coming soon.' :
+      'No tutors match those filters yet. Try another area or subject.';
+    note.hidden = visible.length !== 0;
   }
 
   // ------------------------------------------------------------------- blog
@@ -185,32 +280,32 @@
     if (!a) { root.innerHTML = ''; return; }
     const first = a.name.split(' ')[0];
     const mailto = 'mailto:' + a.email;
-    const tel = 'tel:' + a.phone.replace(/[^\d+]/g, '');
-    const rateLine = SHOW_RATES ? 'Rate: ' + a.rate + ', paid directly to ' + first : 'Rate arranged directly with ' + first;
+    const rateLine = SHOW_RATES && a.rate ? 'Rate: ' + a.rate + ', paid directly to ' + first : 'Rate arranged directly with ' + first;
     const bullets = list => list.map(x => '<div class="modal-bullet"><span class="taupe">✦</span>' + esc(x) + '</div>').join('');
+    const group = (title, body) => body ? '<div class="modal-group"><div class="modal-group-title">' + title + '</div>' + body + '</div>' : '';
+    const tags = list => list.length ? '<div class="tag-row">' + list.map(x => '<span class="modal-tag">' + esc(x) + '</span>').join('') + '</div>' : '';
+    const grades = (a.highlight ? [a.highlight] : []).concat(a.achievements);
     root.innerHTML =
       '<div class="modal-backdrop" data-close>' +
         '<div class="modal" role="dialog" aria-modal="true" aria-label="Tutor profile">' +
           '<button type="button" class="modal-close" data-close aria-label="Close profile">×</button>' +
           '<div class="modal-side">' +
-            '<div class="modal-photo">' + slotHTML(a.img, 'Tutor headshot') + '</div>' +
+            '<div class="modal-photo">' + photoHTML(a) + '</div>' +
             '<div class="modal-contact">' +
               '<div class="modal-contact-title">✦ Contact ' + esc(first) + '</div>' +
-              '<a href="' + esc(mailto) + '" class="modal-email">' + esc(a.email) + '</a>' +
-              '<a href="' + esc(tel) + '">' + esc(a.phone) + '</a>' +
+              (a.email ? '<a href="' + esc(mailto) + '" class="modal-email">' + esc(a.email) + '</a>' : '') +
               '<div class="modal-paynote">Arrange lessons and payment directly with the tutor. Momentum takes no fees.</div>' +
             '</div>' +
           '</div>' +
           '<div class="modal-main">' +
             '<div class="modal-head"><div class="modal-name">' + esc(a.name) + '</div>' +
-            '<div class="modal-meta">' + esc(a.grade) + ' · ' + esc(a.school) + ' · ' + esc(a.area) + '</div></div>' +
-            '<p class="modal-bio">' + esc(a.bio) + '</p>' +
-            '<div class="modal-group"><div class="modal-group-title">Specializes in</div>' +
-              '<div class="tag-row">' + a.subjects.map(sj => '<span class="modal-tag">' + esc(sj) + '</span>').join('') + '</div></div>' +
-            '<div class="modal-group"><div class="modal-group-title">Achievements &amp; grades</div>' + bullets(a.achievements) + '</div>' +
-            '<div class="modal-group"><div class="modal-group-title">Experience</div>' + bullets(a.experience) + '</div>' +
+            '<div class="modal-meta">' + esc([a.grade, a.school, a.area].filter(Boolean).join(' · ')) + '</div></div>' +
+            group('Specializes in', tags(a.subjects)) +
+            group('Comfortable teaching', tags(a.levels)) +
+            group('Achievements &amp; grades', bullets(grades)) +
+            group('Experience', bullets(a.experience)) +
             '<div class="modal-foot"><span class="modal-rate">' + esc(rateLine) + '</span>' +
-              '<a href="' + esc(mailto) + '" class="modal-email-btn">Email ' + esc(first) + ' →</a></div>' +
+              (a.email ? '<a href="' + esc(mailto) + '" class="modal-email-btn">Email ' + esc(first) + ' →</a>' : '') + '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -225,13 +320,12 @@
   });
 
   $('slide-layers').innerHTML = SLIDES.map(s => '<div class="slide-layer">' + slotHTML(s.img, s.placeholder) + '</div>').join('');
-  $('area').innerHTML = [ALL_AREA, ...Array.from(new Set(TUTORS.map(t => t.area))).sort()]
-    .map(ar => '<option value="' + esc(ar) + '">' + esc(ar) + '</option>').join('');
-
   renderSteps();
   renderSlide();
+  renderAreas();
   renderFilters();
   renderTutors();
+  loadTutors();
   if (SHOW_BLOG) {
     document.querySelectorAll('[data-blog]').forEach(el => { el.hidden = false; });
     renderPosts();
@@ -253,6 +347,9 @@
     renderTutors();
   });
   $('area').addEventListener('change', e => { state.area = e.target.value; renderTutors(); });
+  // Image errors don't bubble, so listen in the capture phase.
+  $('tutor-grid').addEventListener('error', onPhotoError, true);
+  $('modal-root').addEventListener('error', onPhotoError, true);
   $('tutor-grid').addEventListener('click', e => {
     const b = e.target.closest('[data-open]');
     if (b) openTutor(Number(b.dataset.open));
