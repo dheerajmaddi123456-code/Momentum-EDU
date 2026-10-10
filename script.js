@@ -266,6 +266,18 @@
   };
   navToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('is-open')));
   navLinks.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+  // Sticky nav goes solid once the page scrolls past the top
+  const nav = document.querySelector('.nav');
+  const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 10);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  // Logos return to the home landing view
+  document.querySelectorAll('[data-home]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    setMenu(false);
+    history.replaceState(null, '', location.pathname + location.search);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
   $('faq-list').addEventListener('click', e => {
     const b = e.target.closest('[data-faq]');
     if (!b) return;
