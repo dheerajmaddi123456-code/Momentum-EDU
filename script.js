@@ -1,6 +1,6 @@
 (() => {
   // ---------------------------------------------------------------- settings
-  const PARENT_FORM_URL = 'https://forms.gle/your-parent-form';
+  const PARENT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScWMa-lBTXn3PRangj2XjTk8bhZIzKjPniITT5ak79obD37wQ/viewform';
   const TUTOR_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfw5Php-losWtqLC_fmR1BOwmB4OpnT49wVe3IHJNu9rDokxQ/viewform?usp=header';
   const SHOW_RATES = true;
   // Accepted tutors: Apps Script web app that returns only public profile fields as JSON.
