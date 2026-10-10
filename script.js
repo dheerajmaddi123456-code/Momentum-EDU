@@ -1,7 +1,7 @@
 (() => {
   // ---------------------------------------------------------------- settings
   const PARENT_FORM_URL = 'https://forms.gle/your-parent-form';
-  const TUTOR_FORM_URL = 'https://forms.gle/your-tutor-application';
+  const TUTOR_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfw5Php-losWtqLC_fmR1BOwmB4OpnT49wVe3IHJNu9rDokxQ/viewform?usp=header';
   const SHOW_RATES = true;
   // Blog is switched off until there are real posts. Set to true to bring back the
   // section and its nav/footer links; the posts themselves live in POSTS below.
