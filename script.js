@@ -19,7 +19,7 @@
   ];
   const SLIDES = [
     { eyebrow: 'Partners, not employees', title: 'A platform built for tutors', text: 'Tutors are independent partners. They set their own rates, subjects and hours, and use Momentum to reach students.', icon: '✦', cardTitle: 'Tutor-first', cardText: 'No commission, no platform fee. Every dollar paid pays goes directly to the tutor.', img: 'm-slide-1', placeholder: 'Tutor working one-on-one with a student' },
-    { eyebrow: 'Low cost', title: 'Quality tutoring - Affordable price', text: 'Peer tutors offer lower rates than private tutoring companies, without cutting corners on quality.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Student doing homework' },
+    { eyebrow: 'Quality', title: 'Quality tutoring from peers', text: 'High school tutors bring strong grades and recent classroom experience to every lesson.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Student doing homework' },
     { eyebrow: 'Community', title: 'Giving back', text: 'From across the GTA, we enable local high schoolers in supporting students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Tutors at a community event' }
   ];
   const TUTORS = [
