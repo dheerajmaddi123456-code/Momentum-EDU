@@ -46,8 +46,9 @@
     { q: 'How can I become a tutor?', a: 'If you’re a high school student in the GTA, fill out the tutor application form. We’ll review it and assist you in setting up your profile.' }
   ];
   const ALL_AREA = 'All of the GTA';
+  const ANY_GRADE = 0;
 
-  const state = { step: 0, slide: 0, filter: 'All', area: ALL_AREA, faq: 0, active: -1, tutors: 'loading' };
+  const state = { step: 0, slide: 0, filter: 'All', area: ALL_AREA, level: ANY_GRADE, faq: 0, active: -1, tutors: 'loading' };
 
   // ---------------------------------------------------------------- helpers
   const $ = id => document.getElementById(id);
@@ -147,6 +148,30 @@
   // item the same way (so "1. Honour roll" inside a list loses its numbering too).
   const text = v => (v == null ? '' : String(v)).trim();
   const list = (v, split) => (Array.isArray(v) ? v : [v]).flatMap(x => split(text(x)));
+  // Grade-level answers ("Primary (1-3)", "Grades 9-12", "Senior") become grade ranges.
+  // Anything that doesn't name a grade (e.g. a subject sent by mistake) is ignored.
+  const LEVEL_RANGES = { primary: [1, 3], junior: [4, 6], intermediate: [7, 8], senior: [9, 12] };
+  function parseLevel(s) {
+    const name = (s.match(/primary|junior|intermediate|senior/i) || [''])[0].toLowerCase();
+    const nums = s.match(/\d{1,2}/g);
+    const range = nums ? [Number(nums[0]), Number(nums[nums.length - 1])] : LEVEL_RANGES[name];
+    if (!range) return null;
+    const lo = Math.min(...range), hi = Math.max(...range);
+    if (lo < 1 || hi > 12) return null;
+    return { name: name && name[0].toUpperCase() + name.slice(1), lo, hi };
+  }
+  const gradeSpan = (lo, hi) => lo === hi ? String(lo) : lo + '–' + hi;
+  // [1,2,3,4,5,6,7,8] → "Grades 1–8"; [1,2,3,9,10,11,12] → "Grades 1–3, 9–12"; [5] → "Grade 5"
+  function gradeSummary(grades) {
+    const runs = [];
+    grades.forEach(g => {
+      const last = runs[runs.length - 1];
+      if (last && g === last[1] + 1) last[1] = g; else runs.push([g, g]);
+    });
+    if (!runs.length) return '';
+    const single = runs.length === 1 && runs[0][0] === runs[0][1];
+    return (single ? 'Grade ' : 'Grades ') + runs.map(r => gradeSpan(r[0], r[1])).join(', ');
+  }
   // Bare answers to yes/no questions aren't experience entries.
   const notYesNo = s => !/^(yes|no|n\/?a|none)\.?$/i.test(s);
   // Turn one record from the web app into the shape the cards and profile use.
@@ -154,6 +179,9 @@
   // The "what makes you a good tutor" answer is deliberately never read or shown.
   function toTutor(r) {
     if (!r || typeof r !== 'object' || !text(r.name)) return null;
+    const levels = list(r.levels, splitList).map(parseLevel).filter(Boolean);
+    const grades = Array.from(new Set(levels.flatMap(l =>
+      Array.from({ length: l.hi - l.lo + 1 }, (_, k) => l.lo + k)))).sort((x, y) => x - y);
     return {
       name: text(r.name),
       email: text(r.email),
@@ -161,7 +189,8 @@
       grade: text(r.grade),
       school: text(r.school),
       subjects: list(r.subjects, splitList),
-      levels: list(r.levels, splitList),
+      levels: levels.map(l => (l.name ? l.name + ' · ' : '') + (l.lo === l.hi ? 'Grade ' : 'Grades ') + gradeSpan(l.lo, l.hi)),
+      grades,
       highlight: formatAverage(text(r.average || r.highlight)),
       achievements: list(r.achievements, splitLines),
       experience: list(r.experience, splitLines).filter(notYesNo),
@@ -176,12 +205,14 @@
     SUBJECTS = ['All', ...Array.from(new Set(TUTORS.flatMap(t => t.subjects))).sort()];
     if (!SUBJECTS.includes(state.filter)) state.filter = 'All';
     if (!TUTORS.some(t => t.area === state.area)) state.area = ALL_AREA;
+    if (!TUTORS.some(t => t.grades.includes(state.level))) state.level = ANY_GRADE;
     // Keep an open profile pointing at the same tutor after a refresh.
     if (openKey) {
       const i = TUTORS.findIndex(t => t.name + '|' + t.email === openKey);
       if (i < 0) closeTutor(); else state.active = i;
     }
     renderAreas();
+    renderLevels();
     renderFilters();
     renderTutors();
   }
@@ -214,6 +245,13 @@
     $('area').innerHTML = [ALL_AREA, ...Array.from(new Set(TUTORS.map(t => t.area))).sort()]
       .map(ar => '<option value="' + esc(ar) + '"' + (ar === state.area ? ' selected' : '') + '>' + esc(ar) + '</option>').join('');
   }
+  // "Student's grade" dropdown: only grades some tutor covers; hidden until there are any.
+  function renderLevels() {
+    const grades = Array.from(new Set(TUTORS.flatMap(t => t.grades))).sort((x, y) => x - y);
+    $('level-wrap').hidden = !grades.length;
+    $('level').innerHTML = [ANY_GRADE, ...grades].map(g =>
+      '<option value="' + g + '"' + (g === state.level ? ' selected' : '') + '>' + (g === ANY_GRADE ? 'Any grade' : 'Grade ' + g) + '</option>').join('');
+  }
   function renderFilters() {
     $('filters').hidden = SUBJECTS.length < 2; // only "All" means there's nothing to filter by
     $('filters').innerHTML = SUBJECTS.map(c =>
@@ -221,7 +259,9 @@
   }
   function renderTutors() {
     const visible = TUTORS.map((t, i) => ({ t, i })).filter(({ t }) =>
-      (state.filter === 'All' || t.subjects.includes(state.filter)) && (state.area === ALL_AREA || t.area === state.area));
+      (state.filter === 'All' || t.subjects.includes(state.filter)) &&
+      (state.area === ALL_AREA || t.area === state.area) &&
+      (state.level === ANY_GRADE || t.grades.includes(state.level)));
     const grid = $('tutor-grid');
     grid.innerHTML = visible.map(({ t, i }) =>
       '<div class="tutor-card">' +
@@ -232,7 +272,9 @@
             '<div class="tutor-meta">' + esc(t.grade) + (t.school ? '<span class="tutor-school"> · ' + esc(t.school) + '</span>' : '') + '</div></div>' +
             '<span class="tutor-area">' + esc(t.area) + '</span>' +
           '</div>' +
-          '<div class="tag-row">' + t.subjects.map(sj => '<span class="tag">' + esc(sj) + '</span>').join('') + '</div>' +
+          '<div class="tag-row">' +
+            (t.grades.length ? '<span class="tag tag-grade">' + esc(gradeSummary(t.grades)) + '</span>' : '') +
+            t.subjects.map(sj => '<span class="tag">' + esc(sj) + '</span>').join('') + '</div>' +
           '<div class="tutor-foot"><span class="tutor-highlight">' + esc(t.highlight) + '</span>' +
             (SHOW_RATES && t.rate ? '<span class="tutor-rate">' + esc(t.rate) + '</span>' : '') + '</div>' +
           '<button type="button" class="tutor-open" data-open="' + i + '">View<span class="tutor-open-long"> profile &amp; contact</span></button>' +
@@ -301,7 +343,7 @@
             '<div class="modal-head"><div class="modal-name">' + esc(a.name) + '</div>' +
             '<div class="modal-meta">' + esc([a.grade, a.school, a.area].filter(Boolean).join(' · ')) + '</div></div>' +
             group('Specializes in', tags(a.subjects)) +
-            group('Comfortable teaching', tags(a.levels)) +
+            group('Grade levels', tags(a.levels)) +
             group('Achievements &amp; grades', bullets(grades)) +
             group('Experience', bullets(a.experience)) +
             '<div class="modal-foot"><span class="modal-rate">' + esc(rateLine) + '</span>' +
@@ -323,6 +365,7 @@
   renderSteps();
   renderSlide();
   renderAreas();
+  renderLevels();
   renderFilters();
   renderTutors();
   loadTutors();
@@ -347,6 +390,7 @@
     renderTutors();
   });
   $('area').addEventListener('change', e => { state.area = e.target.value; renderTutors(); });
+  $('level').addEventListener('change', e => { state.level = Number(e.target.value); renderTutors(); });
   // Image errors don't bubble, so listen in the capture phase.
   $('tutor-grid').addEventListener('error', onPhotoError, true);
   $('modal-root').addEventListener('error', onPhotoError, true);
