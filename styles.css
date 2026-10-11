@@ -112,6 +112,8 @@ button,input,select{font-family:inherit}
 .carousel-stage{flex:2 1 480px;position:relative;border-radius:18px;overflow:hidden;min-height:520px;background:#2e2d2a}
 .slide-layer{position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none}
 .slide-layer.is-active{opacity:1;pointer-events:auto}
+.slide-layer.is-contain .slot-frame{background:#fff}
+.slide-layer.is-contain .slot-frame img{object-fit:contain;padding:6%}
 .carousel-float{position:absolute;right:24px;bottom:24px;max-width:270px;background:#fff;border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,.18);pointer-events:none}
 .float-icon{width:32px;height:32px;border-radius:50%;background:#d6cfbd;display:flex;align-items:center;justify-content:center;font-size:14px}
 .float-title{font-size:15px;font-weight:500}

@@ -25,9 +25,9 @@
     { name: 'Give back', glyph: '+', title: 'Stronger communities', text: 'Students get affordable support, and high school students earn, teach and give back to their communities.' }
   ];
   const SLIDES = [
-    { eyebrow: 'Partners, not employees', title: 'A platform built for tutors', text: 'Tutors are independent partners. They set their own rates, subjects and hours, and use Momentum to reach students.', icon: '✦', cardTitle: 'Tutor-first', cardText: 'No commission, no platform fee. Every dollar paid pays goes directly to the tutor.', img: 'm-slide-1', placeholder: 'Tutor working one-on-one with a student' },
-    { eyebrow: 'Quality', title: 'Quality tutoring from peers', text: 'High school tutors bring strong grades and recent classroom experience to every lesson.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Student doing homework' },
-    { eyebrow: 'Community', title: 'Giving back', text: 'From across the GTA, we enable local high schoolers in supporting students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Tutors at a community event' }
+    { eyebrow: 'Partners, not employees', title: 'A platform built for tutors', text: 'Tutors are independent partners. They set their own rates, subjects and hours, and use Momentum to reach students.', icon: '✦', cardTitle: 'Tutor-first', cardText: 'No commission, no platform fee. Every dollar paid pays goes directly to the tutor.', img: 'm-slide-1', placeholder: 'Person using an online tutoring platform' },
+    { eyebrow: 'Quality', title: 'Quality tutoring from peers', text: 'High school tutors bring strong grades and recent classroom experience to every lesson.', icon: '/', cardTitle: 'Strong students', cardText: 'Profiles list each tutor’s grades and achievements so you can choose with confidence.', img: 'm-slide-2', placeholder: 'Tutor reading with a student', fit: 'contain' },
+    { eyebrow: 'Community', title: 'Giving back', text: 'From across the GTA, we enable local high schoolers in supporting students in their own communities.', icon: '+', cardTitle: 'Local tutors', cardText: 'Filter by area to find a tutor close to home or online.', img: 'm-slide-3', placeholder: 'Map of the Greater Toronto Area' }
   ];
   // Filled from TUTORS_API_URL at startup; see loadTutors().
   let TUTORS = [];
@@ -361,7 +361,9 @@
     a.href = a.dataset.form === 'parent' ? PARENT_FORM_URL : TUTOR_FORM_URL;
   });
 
-  $('slide-layers').innerHTML = SLIDES.map(s => '<div class="slide-layer">' + slotHTML(s.img, s.placeholder) + '</div>').join('');
+  // fit: 'contain' shows the whole image (for illustrations that mustn't be cropped).
+  $('slide-layers').innerHTML = SLIDES.map(s =>
+    '<div class="slide-layer' + (s.fit === 'contain' ? ' is-contain' : '') + '">' + slotHTML(s.img, s.placeholder) + '</div>').join('');
   renderSteps();
   renderSlide();
   renderAreas();
