@@ -13,7 +13,7 @@
   // Blog is switched off until there are real posts. Set to true to bring back the
   // section and its nav/footer links; the posts themselves live in POSTS below.
   const SHOW_BLOG = false;
-  // Photos: drop a file named after the slot id (e.g. m-hero-bg.jpg) into this folder.
+  // Photos: drop a file named after the slot id (e.g. m-slide-1.jpg) into this folder.
   const IMAGE_DIR = 'assets/images/';
   const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'webp'];
 
